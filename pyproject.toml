@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ocean-curation-pipeline-toolkit"
+version = "1.0.0"
+description = "FAIR data packaging pipeline for oceanographic dataset curation"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    {name = "Ranjith Guggilla"},
+]
+keywords = [
+    "oceanography", "FAIR", "ISO-19115-2", "data-curation",
+    "metadata", "archival", "NetCDF",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: GIS",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "click>=8.0",
+    "pyyaml>=6.0",
+    "lxml>=4.9",
+    "jinja2>=3.1",
+    "pandas>=2.0",
+    "openpyxl>=3.1",
+    "chardet>=5.0",
+    "xarray>=2024.0",
+    "netcdf4>=1.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "ruff>=0.4",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+ocean-curation-pipeline = "ocean_curator.__main__:cli"
+
+[project.urls]
+Home = "https://github.com/ranjithguggilla/ocean-curation-pipeline-toolkit"
+Repository = "https://github.com/ranjithguggilla/ocean-curation-pipeline-toolkit"
+
+[tool.setuptools.packages.find]
+include = ["ocean_curator*"]
+
+[tool.setuptools.package-data]
+ocean_curator = ["templates/*.j2"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
