@@ -1,0 +1,163 @@
+# ═══════════════════════════════════════════════════════════════════════
+# ocean-curation-pipeline-toolkit — Pipeline Configuration
+# ═══════════════════════════════════════════════════════════════════════
+#
+# Drives the full data packaging pipeline.
+# Sample data simulates a GOMECC-4 Gulf of Mexico cruise.
+# ═══════════════════════════════════════════════════════════════════════
+
+dataset:
+  title: >-
+    Water Quality and Carbonate Chemistry Measurements from
+    GOMECC-4 Gulf of Mexico Cruise, July-August 2021
+  abstract: >-
+    Hydrographic and carbonate chemistry data collected during the
+    Gulf of Mexico Ecosystems and Carbon Cycle cruise (GOMECC-4),
+    aboard R/V Ronald H. Brown from July 15 to August 15, 2021.
+    Measurements include CTD-derived temperature and salinity,
+    dissolved oxygen, pH, total alkalinity, and nutrient
+    concentrations (nitrate, phosphate) at multiple stations and
+    depths across the western Gulf of Mexico.
+  doi: "10.7266/XXXXXXXX"
+  version: "1.0.0"
+  language: eng
+  character_set: utf8
+  topic_category: oceans
+  progress: completed
+
+  contact:
+    individual_name: "Jane Doe"
+    organization: "NOAA Atlantic Oceanographic and Meteorological Laboratory"
+    email: "jane.doe@noaa.gov"
+    role: principalInvestigator
+    orcid: "0000-0001-2345-6789"
+
+  curator:
+    individual_name: "Ranjith Guggilla"
+    organization: "Independent Data Curator"
+
+  spatial:
+    crs: "EPSG:4326"
+
+  temporal: {}
+
+  keywords:
+    theme:
+      - "EARTH SCIENCE > OCEANS > OCEAN CHEMISTRY > CARBONATE"
+      - "EARTH SCIENCE > OCEANS > OCEAN CHEMISTRY > PH"
+      - "EARTH SCIENCE > OCEANS > OCEAN CHEMISTRY > OXYGEN"
+      - "EARTH SCIENCE > OCEANS > OCEAN CHEMISTRY > NUTRIENTS"
+      - "EARTH SCIENCE > OCEANS > OCEAN TEMPERATURE > WATER TEMPERATURE"
+      - "EARTH SCIENCE > OCEANS > SALINITY/DENSITY > SALINITY"
+    place:
+      - "Gulf of Mexico"
+      - "Western Gulf Continental Shelf"
+      - "Texas Coast"
+    instrument:
+      - "CTD > Conductivity Temperature Depth"
+      - "Niskin bottles"
+      - "pH sensor"
+
+  license:
+    name: "CC-BY-4.0"
+    url: "https://creativecommons.org/licenses/by/4.0/"
+
+  publisher:
+    name: "Scientific Data Repository"
+    url: ""
+
+  funding:
+    agency: "NOAA Ocean Acidification Program"
+    award_number: "NA21OAR0110000"
+
+files:
+  - name: "GOMECC4_cruise_watersamples_RAW.xlsx"
+    source_path: "sample_data/raw/GOMECC4_cruise_watersamples_RAW.xlsx"
+    format: "spreadsheet"
+    sheet: "Water Chemistry"
+    description: >-
+      Raw water chemistry from Niskin bottle samples during CTD casts.
+
+  - name: "station_log.csv"
+    source_path: "sample_data/raw/station_log.csv"
+    format: "csv"
+    description: >-
+      Station occupation log with coordinates, bottom depth, CTD serial.
+
+quality:
+  required_columns:
+    - station
+    - latitude
+    - longitude
+    - depth
+    - temperature
+    - salinity
+
+  value_ranges:
+    latitude: [18.0, 31.0]
+    longitude: [-98.0, -80.0]
+    depth: [0.0, 6000.0]
+    temperature: [-2.0, 35.0]
+    salinity: [0.0, 42.0]
+    dissolved_oxygen: [0.0, 15.0]
+    ph: [7.0, 9.0]
+    total_alkalinity: [1800, 2800]
+
+  duplicate_key_columns:
+    - station
+    - depth
+    - date_time
+
+  max_duplicate_tolerance: 0
+
+transform:
+  normalize_headers: true
+  strip_whitespace: true
+  na_representation: ""
+  line_ending: "unix"
+
+  standardize_timestamps:
+    input_format: "auto"
+    output_format: "%Y-%m-%dT%H:%M:%SZ"
+
+  standardize_coordinates:
+    target_crs: "EPSG:4326"
+    lat_range: [-90, 90]
+    lon_range: [-180, 180]
+
+metadata:
+  metadata_standard_name: "ISO 19115-2 Geographic Information - Metadata - Part 2: Extensions for Imagery and Gridded Data"
+  metadata_standard_version: "ISO 19115-2:2009(E)"
+  hierarchy_level: "dataset"
+
+  platform:
+    identifier: "33RO"
+    description: "R/V Ronald H. Brown — NOAA Ship"
+
+  instruments:
+    - identifier: "SBE911plus"
+      description: "Sea-Bird SBE 911plus CTD with auxiliary sensors"
+    - identifier: "Niskin-24"
+      description: "24-position rosette sampler with 10L Niskin bottles"
+
+  lineage:
+    statement: >-
+      Raw data collected during GOMECC-4 cruise aboard R/V Ronald H. Brown.
+      CTD profiles processed using SBE Data Processing software.
+      Bottle data quality-controlled against CTD downcast values.
+    process_steps:
+      - description: "Raw data ingestion and format normalization"
+        processor: "ocean-curation-pipeline-toolkit v1.0.0"
+      - description: "Header standardization to CF-conventions naming"
+        processor: "ocean-curation-pipeline-toolkit v1.0.0"
+      - description: "Timestamp normalization to ISO 8601 UTC"
+        processor: "ocean-curation-pipeline-toolkit v1.0.0"
+      - description: "Export to CF-1.8 compliant NetCDF-4"
+        processor: "ocean-curation-pipeline-toolkit v1.0.0"
+      - description: "SHA-256 fixity checksum generation"
+        processor: "ocean-curation-pipeline-toolkit v1.0.0"
+
+output:
+  base_dir: "output"
+  archive_format: "tar.gz"
+  include_config_snapshot: true
