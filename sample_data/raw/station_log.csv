@@ -1,0 +1,9 @@
+Station ID,Station Name,Latitude_DD,Longitude_DD,Bottom Depth (m),Date of Cast,Number of Bottles,CTD Serial Number,Weather,Sea State (Beaufort),Notes
+GOM-001,Corpus Christi Shelf,27.5,-96.5,500,07/18/2021,12,SBE911-1400,Clear,2,Strong current at depth
+GOM-002,Matagorda Slope,27.75,-95.8,2000,07/18/2021,10,SBE911-8461,Squalls,5,
+GOM-003,Galveston Approach,28.1,-94.5,3000,07/18/2021,20,SBE911-9099,Squalls,2,
+GOM-004,Central Gulf Mid,27.2,-93.2,3000,07/19/2021,8,SBE911-2746,Squalls,2,
+GOM-005,De Soto Canyon West,26.8,-92.0,3000,07/19/2021,24,SBE911-8611,Clear,5,
+GOM-006,Mississippi Fan,27.0,-91.5,200,07/19/2021,22,SBE911-3184,Squalls,5,Wire angle >15 deg below 200m
+GOM-007,Louisiana Shelf,28.5,-93.8,2000,07/19/2021,18,SBE911-8251,Squalls,5,Strong current at depth
+GOM-008,Sabine Pass,29.0,-94.2,500,07/20/2021,23,SBE911-8373,Overcast,2,Bottle 12 did not fire
