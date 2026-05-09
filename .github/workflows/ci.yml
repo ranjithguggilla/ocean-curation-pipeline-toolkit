@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install system dependencies for HDF5/netCDF4
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libhdf5-dev libnetcdf-dev
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run tests
+        run: pytest -v --tb=short
+        timeout-minutes: 10
+
+      - name: Run full pipeline
+        run: |
+          ocean-curation-pipeline -c config.yaml run-all
+        timeout-minutes: 10
+
+      - name: Validate ISO 19115-2 XML is well-formed
+        run: |
+          python -c "
+          import sys
+          from lxml import etree
+          try:
+              tree = etree.parse('output/submission_v1.0.0/metadata/iso19115-2.xml')
+              root = tree.getroot()
+              ns = {'gmd': 'http://www.isotc211.org/2005/gmd'}
+              assert root.find('.//gmd:fileIdentifier', ns) is not None
+              assert root.find('.//gmd:identificationInfo', ns) is not None
+              print('ISO 19115-2 XML: well-formed and structurally valid')
+          except Exception as e:
+              print(f'ERROR: {e}')
+              sys.exit(1)
+          "
+        timeout-minutes: 5
+
+      - name: Verify checksums
+        run: |
+          cd output/submission_v1.0.0 || exit 1
+          if [ ! -f checksums.sha256 ]; then
+            echo "ERROR: checksums.sha256 not found"
+            exit 1
+          fi
+          failed=0
+          while IFS= read -r line; do
+            expected_hash=$(echo "$line" | awk '{print $NF}')
+            filepath=$(echo "$line" | sed 's/SHA256 (\(.*\)) = .*/\1/')
+
+            # Skip log files as they continue to be modified after checksumming
+            if [[ "$filepath" == logs/* ]]; then
+              echo "SKIP: $filepath (log files excluded)"
+              continue
+            fi
+
+            actual_hash=$(sha256sum "$filepath" 2>/dev/null | awk '{print $1}')
+            if [ "$expected_hash" != "$actual_hash" ]; then
+              echo "FAIL: $filepath (expected: $expected_hash, got: $actual_hash)"
+              failed=1
+            fi
+          done < checksums.sha256
+
+          if [ $failed -eq 1 ]; then
+            exit 1
+          fi
+          echo "All data file checksums verified (logs excluded)."
+        timeout-minutes: 5
+
+      - name: Verify NetCDF CF compliance
+        run: |
+          python -c "
+          import sys
+          import netCDF4 as nc
+          try:
+              ds = nc.Dataset('output/submission_v1.0.0/netcdf/gomecc4_cruise_watersamples_raw.nc')
+              assert 'CF-1.8' in ds.Conventions
+              assert hasattr(ds, 'featureType')
+              cf_count = sum(1 for v in ds.variables.values() if hasattr(v, 'standard_name'))
+              assert cf_count >= 5, f'Only {cf_count} CF-mapped variables'
+              ds.close()
+              print(f'NetCDF CF-1.8: {cf_count} variables with standard_name')
+          except Exception as e:
+              print(f'ERROR: {e}')
+              sys.exit(1)
+          "
+        timeout-minutes: 5
