@@ -9,6 +9,10 @@
 A Python/Bash pipeline that transforms raw oceanographic datasets into
 FAIR-compliant, archive-ready submission packages for scientific data repositories.
 
+![Pipeline Output](docs/screenshots/pipeline_output.png)
+
+![Quality Report](docs/screenshots/quality_report.png)
+
 **Problem:** Principal investigators submit data as ad-hoc Excel files and
 CSVs with inconsistent formatting, no metadata, and no integrity checks.
 Curators spend hours per submission cleaning, documenting, and packaging.
