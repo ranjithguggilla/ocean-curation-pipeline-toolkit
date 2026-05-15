@@ -7,14 +7,14 @@ test:
 	pytest -v --tb=short
 
 test-cov:
-	pytest -v --cov=griidc_pack --cov-report=term-missing
+	pytest -v --cov=ocean_curator --cov-report=term-missing
 
 lint:
-	ruff check griidc_pack/ tests/
+	ruff check ocean_curator/ tests/
 
 run:
 	rm -rf output/
-	python -m griidc_pack -c config.yaml run-all
+	python -m ocean_curator -c config.yaml run-all
 
 samples:
 	python sample_data/generate_samples.py

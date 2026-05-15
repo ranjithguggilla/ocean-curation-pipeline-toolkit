@@ -40,7 +40,7 @@ elif command -v python &> /dev/null; then
 else
     PYTHON=()
 fi
-TOOL="${PYTHON[0]:-python3} -m griidc_pack"
+TOOL="${PYTHON[0]:-python3} -m ocean_curator"
 
 # Colors for terminal output
 RED='\033[0;31m'
@@ -62,7 +62,7 @@ if [[ ${#PYTHON[@]} -eq 0 ]]; then
 fi
 
 # Verify the package is installed (same interpreter as pipeline steps)
-if ! "${PYTHON[0]}" -c "import griidc_pack" 2>/dev/null; then
+if ! "${PYTHON[0]}" -c "import ocean_curator" 2>/dev/null; then
     echo -e "${YELLOW}Package not installed. Installing...${NC}"
     "${PYTHON[0]}" -m pip install -e ".[dev]" --quiet
 fi

@@ -131,7 +131,7 @@ def csv_to_netcdf(csv_path: Path, nc_path: Path, config: dict, logger) -> dict:
         ds.title = dataset_cfg.get("title", "Untitled Dataset")
         ds.summary = dataset_cfg.get("abstract", "")
         ds.id = dataset_cfg.get("doi", "")
-        ds.naming_authority = "org.griidc"
+        ds.naming_authority = dataset_cfg.get("naming_authority", "io.github.ranjithguggilla.ocean-curation-pipeline-toolkit")
         ds.source = "in-situ observations"
         ds.processing_level = "quality-controlled"
         ds.institution = dataset_cfg.get("contact", {}).get("organization", "")

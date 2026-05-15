@@ -171,7 +171,5 @@ investigators.
   http://cfconventions.org
 - Wilkinson, M.D., et al. (2016). The FAIR Guiding Principles for
   scientific data management and stewardship. *Scientific Data*, 3, 160018.
-
-  https://data.griidc.org
 - NDSA Levels of Digital Preservation, Version 2.0 (2019).
   https://ndsa.org/publications/levels-of-digital-preservation/
